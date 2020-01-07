@@ -3,11 +3,19 @@
  * @author Liquidrinu
  */
 
+// custom function keys
+const custom = {
+    yes: 'yes',
+    no: 'no',
+    backspace: '<-',
+    menu: '[Menu]'
+};
+
 // keybaord layout to generate
 const keyboard = [
-    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
-    ["a", "s", "d", "f", "g", "h", "j", "k", "l", ""],
-    ["z", "x", "c", "v", "b", "n", "m", "", "", ""]
+    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", custom.backspace],
+    ["a", "s", "d", "f", "g", "h", "j", "k", "l", "", custom.enter],
+    ["z", "x", "c", "v", "b", "n", "m", custom.yes, custom.no, "", custom.menu]
 ];
 
 // keybindings to interface with peripherals
@@ -30,6 +38,9 @@ const triggers = {
 
 ///////////////////////////////////
 (() => {
+
+    // prevent default keys that are used for browser functionality (ie. backspace going to previous webpage url)
+    //preventBrowserFunctionality(triggers);
 
     // create keyboard layout in html
     createKeyboard(keyboard, "container");
@@ -114,7 +125,7 @@ function createKey (row = 0, col = 0, char = '') {
 
     // add char attribute + visually
     btn.setAttribute('data-char', char || 'empty');
-    btn.innerHTML = char || '[empty]';
+    btn.innerHTML = char || '';
 
     // add to element;
     rowElement.appendChild(btn);
@@ -128,6 +139,7 @@ function createKey (row = 0, col = 0, char = '') {
 
 function addTriggers (triggers) {
     document.addEventListener("keyup", (e) => {
+
         // set event key and triggers
         let t = triggers;
         let key = event.which;
@@ -149,3 +161,20 @@ function addTriggers (triggers) {
         }
     });
 }
+
+/**
+ * @method preventBrowserFunctionality
+ */
+
+function preventBrowserFunctionality (triggers) {
+
+    document.onkeydown = function (e) {
+        e = e || window.event;
+
+        if (!e) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+    };
+};
