@@ -35,28 +35,9 @@ const triggers = {
     createKeyboard(keyboard, "container");
 
     // initialize event listener on the document
-    document.addEventListener("keyup", (e) => {
-        // set event key and triggers
-        let t = triggers;
-        let key = event.which;
+    addTriggers(triggers);
 
-        if (key == t.left) {
-            alert('left');
-        }
-        if (key == t.right) {
-            alert('right');
-        }
-        if (key == t.up) {
-            alert('up');
-        }
-        if (key == t.down) {
-            alert('down');
-        }
-        if (key == t.enter) {
-            alert('enter');
-        }
-    });
-})(triggers);
+})();
 
 ///////////////////////////////////
 
@@ -138,3 +119,33 @@ function createKey (row = 0, col = 0, char = '') {
     // add to element;
     rowElement.appendChild(btn);
 };
+
+
+/**
+ * @method addTriggers
+ * @summary `add keyboard event triggers`
+ */
+
+function addTriggers (triggers) {
+    document.addEventListener("keyup", (e) => {
+        // set event key and triggers
+        let t = triggers;
+        let key = event.which;
+
+        if (key == t.left) {
+            alert('left');
+        }
+        if (key == t.right) {
+            alert('right');
+        }
+        if (key == t.up) {
+            alert('up');
+        }
+        if (key == t.down) {
+            alert('down');
+        }
+        if (key == t.enter) {
+            alert('enter');
+        }
+    });
+}
