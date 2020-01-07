@@ -8,7 +8,7 @@ const custom = {
     yes: 'yes',
     no: 'no',
     backspace: '<-',
-    menu: '[Menu]'
+    menu: ''
 };
 
 // keybaord layout to generate
