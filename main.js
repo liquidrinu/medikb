@@ -79,7 +79,7 @@ function createKeyboard (layout = [], parentId = "container") {
     let cols = layout[0].length;
 
     for (let x = 0; x < rows; x++) {
-        const rowPosition = createRowElement(x);
+        const rowPosition = createRowElement(x, container);
         for (let y = 0; y < cols; y++) {
             const colPosition = y;
             const char = layout[rowPosition][colPosition];// supplied character from keyboard array
@@ -93,16 +93,19 @@ function createKeyboard (layout = [], parentId = "container") {
  * @param {number} rowPosition - id of the parent container
  */
 
-function createRowElement (rowPosition = 0) {
+function createRowElement (rowPosition = 0, container) {
 
     // create html `row` element
     let currentRow = document.createElement("div");
-
     // set id
-    currentRow.id(`row-${rowPosition}`);
+    currentRow.id = `row-${rowPosition}`;
 
     // add css class
     currentRow.classList.add('row-default');
+
+    // append element to parent container
+    container.appendChild(currentRow);
+
     return rowPosition;
 }
 
@@ -129,8 +132,8 @@ function createKey (row = 0, col = 0, char = '') {
     btn.classList.add('key-default');
 
     // add char attribute + visually
-    btn.setAttribute('data-char', char);
-    btn.innerHTML = char;
+    btn.setAttribute('data-char', char || 'empty');
+    btn.innerHTML = char || '[empty]';
 
     // add to element;
     rowElement.appendChild(btn);
