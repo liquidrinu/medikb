@@ -3,10 +3,8 @@ customizable on-screen keyboard to interface with different peripherals
 
 ## general
 
-- use arrow keys to move between the keys 
-
- *loops over on both axis-es like the game `snake`*
- 
+- use arrow keys to move between the keys  
+  ##### loops over on both axis-es like the game `snake`
 - hit 'spacebar' to enter a character
 - hit 'backspace' to remove a character
 - hit enter when hovering on a key to get uppercase version of selected letter
