@@ -1,21 +1,24 @@
 /**
- * @summary keyboard to control with arduino
- * @author Liquidrinu
+ * @summary keyboard to control with peripherals (oldskool style)
+ * @author Liquidrinu <liquidrinu@gmail.com>
  */
 
 // custom function keys
-const custom = {
-    yes: 'yes',
-    no: 'no',
-    backspace: '<-',
-    menu: ''
+const customKeys = {
+    yes: { value: 'yes' },
+    no: { value: 'no' },
+    backspace: { value: '<-' },
+    enter: { value: '[enter]' },
+    space: { value: '[space]' },
+    menu: { value: '' }
 };
 
 // keybaord layout to generate
 const keyboard = [
-    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", custom.backspace],
-    ["a", "s", "d", "f", "g", "h", "j", "k", "l", "", custom.enter],
-    ["z", "x", "c", "v", "b", "n", "m", custom.yes, custom.no, "", custom.menu]
+    /*["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "!"],*/
+    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", customKeys.backspace],
+    ["a", "s", "d", "f", "g", "h", "j", "k", "l", "", customKeys.enter],
+    ["z", "x", "c", "v", "b", "n", "m", customKeys.space, ".", customKeys.yes, customKeys.no]
 ];
 
 // keybindings to interface with peripherals
@@ -32,15 +35,14 @@ const triggers = {
     space: 32,
 };
 
-/**
- * [ Code Execution (init) ]
- */
-
 ///////////////////////////////////
+/**
+ * @description [ Code Execution (init) ]
+ */
 (() => {
 
     // prevent default keys that are used for browser functionality (ie. backspace going to previous webpage url)
-    //preventBrowserFunctionality(triggers);
+    preventBrowserFunctionality(triggers);
 
     // create keyboard layout in html
     createKeyboard(keyboard, "container");
@@ -48,8 +50,14 @@ const triggers = {
     // initialize event listener on the document
     addTriggers(triggers);
 
-})();
+    // init first selected key
+    (() => {
+        document.getElementById('container').childNodes[0].childNodes[0].classList.add('current-key');
+        document.getElementById('viewer').innerHTML = '_';
+    })();
 
+
+})();
 ///////////////////////////////////
 
 /**
@@ -112,25 +120,39 @@ function createRowElement (rowPosition = 0, container) {
  * @description `Create a key with a supplied character`
  */
 
-function createKey (row = 0, col = 0, char = '') {
+function createKey (row = 0, col = 0, char) {
     // get viewer element
     let rowElement = document.getElementById(`row-${row}`);
 
     // create element
     let btn = document.createElement("button");
-    btn.setAttribute('data-key', `col-${col}`);
+    btn.setAttribute('data-row', row);
+    btn.setAttribute('data-col', col);
 
     // add css class
     btn.classList.add('key-default');
 
+    // assign char
+    let _char = typeof char === 'object' ? customKey(char) : char;
+
     // add char attribute + visually
-    btn.setAttribute('data-char', char || 'empty');
-    btn.innerHTML = char || '';
+    btn.setAttribute('data-char', _char);
+    btn.innerHTML = _char || '';
 
     // add to element;
     rowElement.appendChild(btn);
 };
 
+/**
+ * @method customKey
+ * @param {object} char
+ *
+ * @description - `add custom key functionality`
+ */
+
+function customKey (char) {
+    return char.value;
+}
 
 /**
  * @method addTriggers
@@ -145,22 +167,116 @@ function addTriggers (triggers) {
         let key = event.which;
 
         if (key == t.left) {
-            alert('left');
+            (() => { keySelector('left'); })();
         }
         if (key == t.right) {
-            alert('right');
+            keySelector('right');
         }
         if (key == t.up) {
-            alert('up');
+            keySelector('up');
         }
         if (key == t.down) {
-            alert('down');
+            keySelector('down');
+        }
+        if (key == t.space) {
+            keySelector('space');
         }
         if (key == t.enter) {
-            alert('enter');
+            keySelector('enter');
+        }
+        if (key == t.backspace) {
+            keySelector('backspace');
         }
     });
 }
+
+/**
+ * @method keySelector
+ * @param {string} action - signifies which key is pressed
+ */
+
+function keySelector (action) {
+
+    const matrix = [];
+    let el = document.getElementsByClassName("current-key")[0];
+    let key = {
+        x: parseInt(el.getAttribute('data-row')), y: parseInt(el.getAttribute('data-col')), char: el.getAttribute('data-char'),
+    };
+
+    // re-create keyboard matrix (y I do this? NOTE: drink less coffee)
+    document.getElementById("container")
+        .querySelectorAll("div")
+        .forEach(row => {
+            matrix.push(
+                Array.apply(null, Array(row.childNodes.length))
+                    .map((n, i) =>
+                        row.childNodes[i]
+                            .getAttribute('data-char')
+                    ));
+        });
+
+    // slice the underscore `positioner`
+
+
+    switch (action) {
+        case 'left':
+            el.classList.remove('current-key');
+            key.y = key.y === 0 ? matrix[key.x].length - 1 : key.y - 1;
+            document.querySelector(`[data-row="${key.x}"][data-col="${key.y}"]`).classList.add('current-key');
+            break;
+        case 'right':
+            el.classList.remove('current-key');
+            key.y = key.y === matrix[key.x].length - 1 ? key.y = 0 : key.y + 1;
+            document.querySelector(`[data-row="${key.x}"][data-col="${key.y}"]`).classList.add('current-key');
+            break;
+        case 'up':
+            el.classList.remove('current-key');
+            key.x = key.x === 0 ? key.x = matrix.length - 1 : key.x = key.x - 1;
+            document.querySelector(`[data-row="${key.x}"][data-col="${key.y}"]`).classList.add('current-key');
+            break;
+        case 'down':
+            el.classList.remove('current-key');
+            key.x = key.x === matrix.length - 1 ? key.x = 0 : key.x = key.x + 1;
+            document.querySelector(`[data-row="${key.x}"][data-col="${key.y}"]`).classList.add('current-key');
+            break;
+        case 'space':
+            key.char === "[space]"
+                ? (() => {
+                    let t = document.getElementById('viewer').innerHTML;
+                    document.getElementById('viewer').innerHTML = t.slice(0, -1);
+                    document.getElementById('viewer').innerHTML += " " + '_';
+                })()
+                : key.char === "[enter]"
+                    ? (() => {
+                        let t = document.getElementById('viewer').innerHTML;
+                        document.getElementById('viewer').innerHTML = t.slice(0, -1);
+                        document.getElementById('viewer').innerHTML += '<br>' + '_';
+                    })()
+                    : (() => {
+                        let t = document.getElementById('viewer').innerHTML;
+                        document.getElementById('viewer').innerHTML = t.slice(0, -1);
+                        document.getElementById('viewer').innerHTML += key.char + '_';
+                    })();
+            break;
+        case 'enter':
+            key.char !== "[enter]" && key.char !== "[space]" ?
+                (() => {
+                    let t = document.getElementById('viewer').innerHTML;
+                    document.getElementById('viewer').innerHTML = t.slice(0, -1);
+                    document.getElementById('viewer').innerHTML += key.char.toUpperCase() + '_';
+                })() : null;
+            break;
+        case 'backspace':
+            let text = document.getElementById('viewer').innerHTML;
+            document.getElementById('viewer').innerHTML = text.length !== 0 ? text.slice(0, -1) : '';
+            break;
+        default:
+            break;
+    }
+
+    return null;
+}
+
 
 /**
  * @method preventBrowserFunctionality
