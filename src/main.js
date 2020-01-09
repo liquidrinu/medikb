@@ -10,6 +10,7 @@ const customKeys = {
     backspace: { value: '<-' },
     enter: { value: '[enter]' },
     space: { value: '[space]' },
+    shift: { value: '[shift]' },
     clear: { value: '[clear]' },
     menu: { value: '' }
 };
@@ -19,7 +20,7 @@ const keyboard = [
     ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", customKeys.backspace],
     ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", customKeys.clear],
     ["a", "s", "d", "f", "g", "h", "j", "k", "l", "?", customKeys.enter],
-    ["z", "x", "c", "v", "b", "n", "m", customKeys.space, ".", customKeys.yes, customKeys.no]
+    ["z", "x", "c", "v", "b", "n", "m", customKeys.space, customKeys.shift, customKeys.yes, customKeys.no]
 ];
 
 // keybindings to interface with peripherals
@@ -245,7 +246,9 @@ function keySelector (action) {
                     : key.char === "[clear]"
                         ? document.getElementById('viewer')
                             .innerHTML = '' + '_'
-                        : positioner(key.char); // default action
+                        : key.char === "[shift]"
+                            ? shiftCasing()
+                            : positioner(key.char); // default action
             break;
         case 'enter':
             key.char !== "[enter]" && key.char !== "[space]"
@@ -273,6 +276,28 @@ function keySelector (action) {
     return null;
 }
 
+
+/**
+ * @method shiftCasing
+ */
+
+function shiftCasing () {
+    const alphabet =
+        [...'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMENOPQRSTUVWXYZ'];
+    let x = document.querySelectorAll('[data-char]');
+    x.forEach(el => {
+        let char = el.getAttribute('data-char');
+        if (char.length === 1) {
+            if (char === char.toUpperCase()) {
+                el.setAttribute('data-char', char.toLowerCase());
+                el.innerHTML = char.toLowerCase();
+            } else {
+                el.setAttribute('data-char', char.toUpperCase());
+                el.innerHTML = char.toUpperCase();
+            }
+        }
+    });
+}
 
 /**
  * @method preventBrowserFunctionality
