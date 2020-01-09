@@ -15,9 +15,9 @@ const customKeys = {
 
 // keybaord layout to generate
 const keyboard = [
-    /*["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "!"],*/
+    ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "!"],
     ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", customKeys.backspace],
-    ["a", "s", "d", "f", "g", "h", "j", "k", "l", "", customKeys.enter],
+    ["a", "s", "d", "f", "g", "h", "j", "k", "l", "?", customKeys.enter],
     ["z", "x", "c", "v", "b", "n", "m", customKeys.space, ".", customKeys.yes, customKeys.no]
 ];
 
@@ -55,7 +55,6 @@ const triggers = {
         document.getElementById('container').childNodes[0].childNodes[0].classList.add('current-key');
         document.getElementById('viewer').innerHTML = '_';
     })();
-
 
 })();
 ///////////////////////////////////
@@ -97,6 +96,7 @@ function createRowElement (rowPosition = 0, container) {
 
     // create html `row` element
     let currentRow = document.createElement("div");
+
     // set id
     currentRow.id = `row-${rowPosition}`;
 
@@ -121,6 +121,7 @@ function createRowElement (rowPosition = 0, container) {
  */
 
 function createKey (row = 0, col = 0, char) {
+
     // get viewer element
     let rowElement = document.getElementById(`row-${row}`);
 
@@ -198,9 +199,10 @@ function addTriggers (triggers) {
 function keySelector (action) {
 
     const matrix = [];
-    let el = document.getElementsByClassName("current-key")[0];
+    let viewer = document.getElementById('viewer').innerHTML;
+    let cKey = document.getElementsByClassName("current-key")[0];
     let key = {
-        x: parseInt(el.getAttribute('data-row')), y: parseInt(el.getAttribute('data-col')), char: el.getAttribute('data-char'),
+        x: parseInt(cKey.getAttribute('data-row')), y: parseInt(cKey.getAttribute('data-col')), char: cKey.getAttribute('data-char'),
     };
 
     // re-create keyboard matrix (y I do this? NOTE: drink less coffee)
@@ -215,60 +217,54 @@ function keySelector (action) {
                     ));
         });
 
-    // slice the underscore `positioner`
+    // manipulate the underscore `positioner`
+    const positioner = (_char) => {
+        let cText = document.getElementById('viewer').innerHTML;
+        document.getElementById('viewer').innerHTML = cText.slice(0, -1);
+        document.getElementById('viewer').innerHTML += _char + '_';
+    };
 
+    // select key and update class
+    const switchKey = () => {
+        cKey.classList.remove('current-key'); document.querySelector(`[data-row="${key.x}"][data-col="${key.y}"]`).classList.add('current-key');
+    };
 
+    // determine action based on trigger event
     switch (action) {
         case 'left':
-            el.classList.remove('current-key');
             key.y = key.y === 0 ? matrix[key.x].length - 1 : key.y - 1;
-            document.querySelector(`[data-row="${key.x}"][data-col="${key.y}"]`).classList.add('current-key');
+            switchKey();
             break;
         case 'right':
-            el.classList.remove('current-key');
-            key.y = key.y === matrix[key.x].length - 1 ? key.y = 0 : key.y + 1;
-            document.querySelector(`[data-row="${key.x}"][data-col="${key.y}"]`).classList.add('current-key');
+            key.y = key.y === matrix[key.x].length - 1 ? 0 : key.y + 1;
+            switchKey();
             break;
         case 'up':
-            el.classList.remove('current-key');
-            key.x = key.x === 0 ? key.x = matrix.length - 1 : key.x = key.x - 1;
-            document.querySelector(`[data-row="${key.x}"][data-col="${key.y}"]`).classList.add('current-key');
+            key.x = key.x === 0 ? matrix.length - 1 : key.x - 1;
+            switchKey();
             break;
         case 'down':
-            el.classList.remove('current-key');
-            key.x = key.x === matrix.length - 1 ? key.x = 0 : key.x = key.x + 1;
-            document.querySelector(`[data-row="${key.x}"][data-col="${key.y}"]`).classList.add('current-key');
+            key.x = key.x === matrix.length - 1 ? 0 : key.x + 1;
+            switchKey();
             break;
         case 'space':
             key.char === "[space]"
-                ? (() => {
-                    let t = document.getElementById('viewer').innerHTML;
-                    document.getElementById('viewer').innerHTML = t.slice(0, -1);
-                    document.getElementById('viewer').innerHTML += " " + '_';
-                })()
+                ? positioner(" ")
                 : key.char === "[enter]"
-                    ? (() => {
-                        let t = document.getElementById('viewer').innerHTML;
-                        document.getElementById('viewer').innerHTML = t.slice(0, -1);
-                        document.getElementById('viewer').innerHTML += '<br>' + '_';
-                    })()
-                    : (() => {
-                        let t = document.getElementById('viewer').innerHTML;
-                        document.getElementById('viewer').innerHTML = t.slice(0, -1);
-                        document.getElementById('viewer').innerHTML += key.char + '_';
-                    })();
+                    ? positioner('<br>')
+                    : positioner(key.char);
             break;
         case 'enter':
-            key.char !== "[enter]" && key.char !== "[space]" ?
-                (() => {
-                    let t = document.getElementById('viewer').innerHTML;
-                    document.getElementById('viewer').innerHTML = t.slice(0, -1);
-                    document.getElementById('viewer').innerHTML += key.char.toUpperCase() + '_';
-                })() : null;
+            key.char !== "[enter]" && key.char !== "[space]"
+                ? positioner(key.char.toUpperCase())
+                : null;
             break;
         case 'backspace':
             let text = document.getElementById('viewer').innerHTML;
-            document.getElementById('viewer').innerHTML = text.length !== 0 ? text.slice(0, -1) : '';
+            document.getElementById('viewer').innerHTML =
+                text.length !== 0
+                    ? text = text.slice(0, -2) + '_'
+                    : '';
             break;
         default:
             break;
