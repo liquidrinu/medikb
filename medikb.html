@@ -24,6 +24,7 @@ body {
   background-color: #1d1b1d;
   width: 100%;
   height: 100vh;
+  margin-left: -10px;
 }
 
 #viewer {
@@ -79,8 +80,10 @@ button {
 </head>
 <body>
   <div id="screen">
-    <div id="viewer"></div>
-    <div id="container"></div>
+
+      <div id="viewer"></div>
+      <div id="container"></div>
+
   </div>
 <script>
 /**
@@ -101,8 +104,8 @@ const customKeys = {
 
 // keybaord layout to generate
 const keyboard = [
-    ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", customKeys.clear],
-    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", customKeys.backspace],
+    /*["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", customKeys.backspace], */
+    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", customKeys.clear],
     ["a", "s", "d", "f", "g", "h", "j", "k", "l", "?", customKeys.enter],
     ["z", "x", "c", "v", "b", "n", "m", customKeys.space, ".", customKeys.yes, customKeys.no]
 ];
