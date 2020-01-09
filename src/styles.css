@@ -51,11 +51,17 @@ body {
   color: #aaa;
 }
 
+.active-modifier {
+  border-color: greenyellow;
+  color: greenyellow;
+  background-color: rgb(87, 122, 33);
+}
+
 .current-key {
   background-color: #166c86;
   border-color: #06c0f8;
   color: #fff;
-  font-size: 1.8rem;
+  /*font-size: 1.8rem; */
 }
 
 button {
