@@ -24,6 +24,7 @@ const keyboard = [
 
 // keybindings to interface with peripherals
 const triggers = {
+
     // keyboard movement
     up: 38,
     down: 40,
@@ -42,7 +43,8 @@ const triggers = {
  */
 (() => {
 
-    // prevent default keys that are used for browser functionality (ie. backspace going to previous webpage url)
+    // prevent default keys that are used for browser functionality
+    // (ie. backspace going to previous webpage url)
     preventBrowserFunctionality(triggers);
 
     // create keyboard layout in html
@@ -53,7 +55,8 @@ const triggers = {
 
     // init first selected key
     (() => {
-        document.getElementById('container').childNodes[0].childNodes[0].classList.add('current-key');
+        document.getElementById('container')
+            .childNodes[0].childNodes[0].classList.add('current-key');
         document.getElementById('viewer').innerHTML = '_';
     })();
 
@@ -82,7 +85,7 @@ function createKeyboard (layout = [], parentId = "container") {
         const rowPosition = createRowElement(x, container);
         for (let y = 0; y < cols; y++) {
             const colPosition = y;
-            const char = layout[rowPosition][colPosition];// supplied character from keyboard array
+            const char = layout[rowPosition][colPosition];
             createKey(rowPosition, colPosition, char);
         }
     };
@@ -199,7 +202,9 @@ function keySelector (action) {
     const matrix = [];
     let cKey = document.getElementsByClassName("current-key")[0];
     let key = {
-        x: parseInt(cKey.getAttribute('data-row')), y: parseInt(cKey.getAttribute('data-col')), char: cKey.getAttribute('data-char'),
+        x: parseInt(cKey.getAttribute('data-row')),
+        y: parseInt(cKey.getAttribute('data-col')),
+        char: cKey.getAttribute('data-char'),
     };
 
     // re-create keyboard matrix (y I do this? NOTE: drink less coffee)
@@ -208,16 +213,14 @@ function keySelector (action) {
         .forEach(row => {
             matrix.push(
                 Array.apply(null, Array(row.childNodes.length))
-                    .map((n, i) =>
-                        row.childNodes[i]
-                            .getAttribute('data-char')
-                    ));
+                    .map((n, i) => ({ ...row.childNodes[i].dataset })));
         });
 
     // manipulate the underscore `positioner`
     const positioner = (_char) => {
         let cText = document.getElementById('viewer').innerHTML;
-        document.getElementById('viewer').innerHTML = cText.slice(0, -1) + _char + '_';
+        document.getElementById('viewer')
+            .innerHTML = cText.slice(0, -1) + _char + '_';
     };
 
     // determine action/position based on trigger event
@@ -240,9 +243,9 @@ function keySelector (action) {
                 : key.char === "[enter]"
                     ? positioner('<br>')
                     : key.char === "[clear]"
-                        ? document.getElementById('viewer').innerHTML = '' + '_'
-                        // default action
-                        : positioner(key.char);
+                        ? document.getElementById('viewer')
+                            .innerHTML = '' + '_'
+                        : positioner(key.char); // default action
             break;
         case 'enter':
             key.char !== "[enter]" && key.char !== "[space]"
@@ -263,7 +266,8 @@ function keySelector (action) {
     // select key and update class
     (() => {
         cKey.classList.remove('current-key');
-        document.querySelector(`[data-row="${key.x}"][data-col="${key.y}"]`).classList.add('current-key');
+        document.querySelector(`[data-row="${key.x}"][data-col="${key.y}"]`)
+            .classList.add('current-key');
     })();
 
     return null;
