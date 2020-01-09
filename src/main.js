@@ -10,12 +10,13 @@ const customKeys = {
     backspace: { value: '<-' },
     enter: { value: '[enter]' },
     space: { value: '[space]' },
+    clear: { value: '[clear]' },
     menu: { value: '' }
 };
 
 // keybaord layout to generate
 const keyboard = [
-    ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "!"],
+    ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", customKeys.clear],
     ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", customKeys.backspace],
     ["a", "s", "d", "f", "g", "h", "j", "k", "l", "?", customKeys.enter],
     ["z", "x", "c", "v", "b", "n", "m", customKeys.space, ".", customKeys.yes, customKeys.no]
@@ -238,7 +239,10 @@ function keySelector (action) {
                 ? positioner(" ")
                 : key.char === "[enter]"
                     ? positioner('<br>')
-                    : positioner(key.char);
+                    : key.char === "[clear]"
+                        ? document.getElementById('viewer').innerHTML = '' + '_'
+                        // default action
+                        : positioner(key.char);
             break;
         case 'enter':
             key.char !== "[enter]" && key.char !== "[space]"
