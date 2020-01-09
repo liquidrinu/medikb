@@ -167,26 +167,23 @@ function addTriggers (triggers) {
         let t = triggers;
         let key = event.which;
 
-        if (key == t.left) {
-            (() => { keySelector('left'); })();
-        }
-        if (key == t.right) {
-            keySelector('right');
-        }
-        if (key == t.up) {
-            keySelector('up');
-        }
-        if (key == t.down) {
-            keySelector('down');
-        }
-        if (key == t.space) {
-            keySelector('space');
-        }
-        if (key == t.enter) {
-            keySelector('enter');
-        }
-        if (key == t.backspace) {
-            keySelector('backspace');
+        switch (key) {
+            case t.left:
+                keySelector('left'); break;
+            case t.right:
+                keySelector('right'); break;
+            case t.up:
+                keySelector('up'); break;
+            case t.down:
+                keySelector('down'); break;
+            case t.space:
+                keySelector('space'); break;
+            case t.enter:
+                keySelector('enter'); break;
+            case t.backspace:
+                keySelector('backspace'); break;
+            default:
+                break;
         }
     });
 }
@@ -199,7 +196,6 @@ function addTriggers (triggers) {
 function keySelector (action) {
 
     const matrix = [];
-    let viewer = document.getElementById('viewer').innerHTML;
     let cKey = document.getElementsByClassName("current-key")[0];
     let key = {
         x: parseInt(cKey.getAttribute('data-row')), y: parseInt(cKey.getAttribute('data-col')), char: cKey.getAttribute('data-char'),
@@ -220,32 +216,22 @@ function keySelector (action) {
     // manipulate the underscore `positioner`
     const positioner = (_char) => {
         let cText = document.getElementById('viewer').innerHTML;
-        document.getElementById('viewer').innerHTML = cText.slice(0, -1);
-        document.getElementById('viewer').innerHTML += _char + '_';
+        document.getElementById('viewer').innerHTML = cText.slice(0, -1) + _char + '_';
     };
 
-    // select key and update class
-    const switchKey = () => {
-        cKey.classList.remove('current-key'); document.querySelector(`[data-row="${key.x}"][data-col="${key.y}"]`).classList.add('current-key');
-    };
-
-    // determine action based on trigger event
+    // determine action/position based on trigger event
     switch (action) {
         case 'left':
             key.y = key.y === 0 ? matrix[key.x].length - 1 : key.y - 1;
-            switchKey();
             break;
         case 'right':
             key.y = key.y === matrix[key.x].length - 1 ? 0 : key.y + 1;
-            switchKey();
             break;
         case 'up':
             key.x = key.x === 0 ? matrix.length - 1 : key.x - 1;
-            switchKey();
             break;
         case 'down':
             key.x = key.x === matrix.length - 1 ? 0 : key.x + 1;
-            switchKey();
             break;
         case 'space':
             key.char === "[space]"
@@ -269,6 +255,12 @@ function keySelector (action) {
         default:
             break;
     }
+
+    // select key and update class
+    (() => {
+        cKey.classList.remove('current-key');
+        document.querySelector(`[data-row="${key.x}"][data-col="${key.y}"]`).classList.add('current-key');
+    })();
 
     return null;
 }
