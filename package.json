@@ -1,0 +1,11 @@
+{
+    "name": "medikb",
+    "version": "1.0.0",
+    "description": "customizable on-screen keyboard to interface with different peripherals",
+    "scripts": {
+        "build": "bash ./bin/ikea.sh",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "liquidrinu",
+    "license": "MIT"
+}

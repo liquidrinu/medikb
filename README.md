@@ -1,9 +1,18 @@
 # medikb
+
 customizable on-screen keyboard to interface with different peripherals
+
+## build
+
+```
+npm run build
+```
+
+For a single file (medikb.html)
 
 ## general
 
-- use arrow keys to move between the keys  
+- use arrow keys to move between the keys
   ##### loops over on both axis-es like the game `snake`
 - hit 'spacebar' to enter a character
 - hit 'backspace' to remove a character
