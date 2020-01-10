@@ -52,9 +52,10 @@ body {
 }
 
 .active-modifier {
-  border-color: greenyellow;
-  color: greenyellow;
-  background-color: rgb(87, 122, 33);
+  border-color: rgb(255, 47, 109);
+  /*color: rgb(255, 47, 151); */
+  color: #fff;
+  background-color: rgb(100, 12, 63);
 }
 
 .current-key {

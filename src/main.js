@@ -10,7 +10,7 @@ const customKeys = {
     backspace: { value: '<-' },
     enter: { value: '[enter]' },
     space: { value: '[space]' },
-    caps: { value: '[caps]' },
+    mod: { value: '[mod]' },
     clear: { value: '[clear]' },
     menu: { value: '' }
 };
@@ -20,7 +20,7 @@ const keyboard = [
     ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "\uD83D\uDE00"],
     ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", customKeys.clear],
     ["a", "s", "d", "f", "g", "h", "j", "k", "l", "?", customKeys.enter],
-    ["z", "x", "c", "v", "b", "n", "m", customKeys.space, customKeys.caps, customKeys.yes, customKeys.no]
+    ["z", "x", "c", "v", "b", "n", "m", customKeys.space, customKeys.mod, customKeys.yes, customKeys.no]
 ];
 
 // keybindings to interface with peripherals
@@ -77,6 +77,9 @@ const triggers = {
  */
 
 function createKeyboard (layout = [], parentId = "container") {
+
+    // init element
+    document.getElementById('container').innerHTML = '';
 
     let container = document.getElementById(parentId);
     let rows = layout.length;
@@ -246,7 +249,7 @@ function keySelector (action) {
                     : key.char === "[clear]"
                         ? document.getElementById('viewer')
                             .innerHTML = '' + '_'
-                        : key.char === "[caps]"
+                        : key.char === "[mod]"
                             ? shiftCasing()
                             : positioner(key.char); // default action
             break;
@@ -290,15 +293,39 @@ function shiftCasing () {
                 if (char === char.toUpperCase()) {
                     el.setAttribute('data-char', char.toLowerCase());
                     el.innerHTML = char.toLowerCase();
-                    document.querySelector('[data-char="\[caps\]"]').classList.remove('active-modifier');
+                    document.querySelector('[data-char="\[mod\]"]').classList.remove('active-modifier');
+                    modMap1(2);
                 } else {
                     el.setAttribute('data-char', char.toUpperCase());
                     el.innerHTML = char.toUpperCase();
-                    document.querySelector('[data-char="\[caps\]"]').classList.add('active-modifier');
+                    document.querySelector('[data-char="\[mod\]"]').classList.add('active-modifier');
+                    modMap1(1);
                 }
             }
         });
 }
+
+/**
+ * @method modMap1
+ */
+
+function modMap1 (set) {
+    const specialChars = [...`!@#$%^&*()${(() => '')()} `];
+    const specialChars2 = [...`1234567890${(() => "\uD83D\uDE00")()}`];
+    let char = document.getElementById('row-0').childNodes[0].getAttribute('data-char');
+    if (set === 1) {
+        document.getElementById('row-0').childNodes.forEach((el, idx) => {
+            el.setAttribute('data-char', specialChars[idx]);
+            el.innerHTML = specialChars[idx];
+        });
+    }
+    if (set === 2) {
+        document.getElementById('row-0').childNodes.forEach((el, idx) => {
+            el.setAttribute('data-char', specialChars2[idx]);
+            el.innerHTML = specialChars2[idx];
+        });
+    }
+};
 
 /**
  * @method preventBrowserFunctionality
