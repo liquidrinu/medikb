@@ -310,7 +310,7 @@ function shiftCasing () {
  */
 
 function modMap1 (set) {
-    const specialChars = [...`!@#$%^&*()${(() => '')()} `];
+    const specialChars = [...`!@#$%^&*()${(() => '€')()} `];
     const specialChars2 = [...`1234567890${(() => "\uD83D\uDE00")()}`];
     let char = document.getElementById('row-0').childNodes[0].getAttribute('data-char');
     if (set === 1) {
