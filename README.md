@@ -2,6 +2,8 @@
 
 customizable on-screen keyboard to interface with different peripherals
 
+![Image description](https://github.com/liquidrinu/medikb/blob/master/medikb.PNG)
+
 ## build
 
 ```
